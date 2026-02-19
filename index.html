@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hava Kalite Istasyonu</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="refresh" content="5">
+    <style>
+        body {
+            font-family: Arial;
+            text-align: center;
+            background: #f4f4f4;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            margin: 20px;
+            display: inline-block;
+            border-radius: 10px;
+            box-shadow: 0 0 10px gray;
+        }
+    </style>
+</head>
+<body>
+
+<h1>🌫️ Hava Kalite Istasyonu</h1>
+
+<div class="card">
+    <h2>Sensor 1</h2>
+    <p id="s1">Yükleniyor...</p>
+</div>
+
+<div class="card">
+    <h2>Sensor 2</h2>
+    <p id="s2">Yükleniyor...</p>
+</div>
+
+<div class="card">
+    <h2>Sensor 3</h2>
+    <p id="s3">Yükleniyor...</p>
+</div>
+
+<script>
+fetch("veri.json")
+.then(response => response.json())
+.then(data => {
+    document.getElementById("s1").innerText = data.sensor1;
+    document.getElementById("s2").innerText = data.sensor2;
+    document.getElementById("s3").innerText = data.sensor3;
+});
+</script>
+
+</body>
+</html>
