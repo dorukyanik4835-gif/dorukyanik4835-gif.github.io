@@ -370,5 +370,99 @@ body {
 
 </body>
 </html>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Temizlik Takip Sistemi</title>
+
+<style>
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background: url("bg.jpg") no-repeat center center;
+    background-size: 1024px 1024px;
+    background-color: #f4f4f4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    background: rgba(255,255,255,0.9);
+    padding: 20px;
+    border-radius: 15px;
+    width: 350px;
+    text-align: center;
+    box-shadow: 0 0 15px rgba(0,0,0,0.3);
+}
+
+h2 {
+    margin-top: 0;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    margin: 6px 0;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #2d89ef;
+    color: white;
+}
+
+button:hover {
+    background-color: #1b5fa7;
+}
+
+.info {
+    margin-top: 15px;
+    font-weight: bold;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>🧼 Temizlik Sistemi</h2>
+
+    <p><strong>Temizlik Zamanı:</strong></p>
+    <p id="zaman"></p>
+
+    <p><strong>Neyle Temizlendi?</strong></p>
+
+    <button onclick="sec('Domestos')">Domestos</button>
+    <button onclick="sec('Cif')">Cif</button>
+    <button onclick="sec('Mr. Muscle')">Mr. Muscle</button>
+    <button onclick="sec('Bingo')">Bingo</button>
+
+    <div class="info">
+        Seçilen Ürün: <span id="urun">Henüz seçilmedi</span>
+    </div>
+</div>
+
+<script>
+function guncelZaman() {
+    const now = new Date();
+    document.getElementById("zaman").innerText =
+        now.toLocaleString("tr-TR");
+}
+
+function sec(marka) {
+    document.getElementById("urun").innerText = marka;
+}
+
+setInterval(guncelZaman, 1000);
+guncelZaman();
+</script>
+
+</body>
+</html>
 
 
