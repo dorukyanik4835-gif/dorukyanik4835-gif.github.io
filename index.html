@@ -126,4 +126,104 @@ html, body {
   width: 100%;
   min-height: 100vh;
 }
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hava Kalite & Temizlik Takip</title>
+
+<!-- PWA Manifest -->
+<link rel="manifest" href="manifest.json">
+
+<style>
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  background: #f4f4f4;
+  text-align: center;
+  width: 100%;
+  height: 100%;
+}
+
+header {
+  background: #007bff;
+  color: white;
+  padding: 15px;
+  font-size: 24px;
+}
+
+.container {
+  padding: 20px;
+}
+
+.card {
+  background: white;
+  padding: 15px;
+  margin: 15px auto;
+  border-radius: 8px;
+  max-width: 400px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+input, button {
+  padding: 10px;
+  margin-top: 10px;
+  width: 90%;
+}
+
+button {
+  background: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+</style>
+</head>
+
+<body>
+
+<header>🌫️ Hava Kalite & Temizlik</header>
+
+<div class="container">
+
+  <div class="card">
+    <h3>Son Sensör Değerleri</h3>
+    <p id="sensor1">Sensor 1: 0</p>
+    <p id="sensor2">Sensor 2: 0</p>
+    <p id="sensor3">Sensor 3: 0</p>
+  </div>
+
+  <div class="card">
+    <h3>Temizlik Kaydı</h3>
+    <input type="text" id="temizlik" placeholder="Ne ile temizlendi?">
+    <button onclick="kaydet()">Kaydet</button>
+    <p><b>Son Temizlik:</b></p>
+    <p id="sonTemizlik">Henüz kayıt yok</p>
+  </div>
+
+</div>
+
+<script>
+function kaydet() {
+  let text = document.getElementById("temizlik").value;
+  let zaman = new Date().toLocaleString();
+  let veri = text + " - " + zaman;
+
+  localStorage.setItem("temizlikKayit", veri);
+  document.getElementById("sonTemizlik").innerText = veri;
+}
+
+window.onload = function() {
+  let kayit = localStorage.getItem("temizlikKayit");
+  if (kayit) {
+    document.getElementById("sonTemizlik").innerText = kayit;
+  }
+};
+</script>
+
+</body>
+</html>
 
