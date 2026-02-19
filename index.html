@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Temizlik ve Gaz Takip Sistemi</title>
+<title>Gaz & Temizlik Takip</title>
 
 <style>
 body {
@@ -24,21 +24,18 @@ body {
     border-radius: 15px;
     width: 380px;
     text-align: center;
-    box-shadow: 0 0 20px rgba(0,0,0,0.3);
+    box-shadow: 0 0 20px rgba(0,0,0,0.25);
 }
 
-h1 {
-    margin-top: 0;
-    color: #2d89ef;
-}
+h1 { color: #2d89ef; margin-top: 0; }
 
 .sensor {
-    font-size: 20px;
-    margin: 10px 0;
+    font-size: 22px;
     font-weight: bold;
+    margin: 15px 0;
 }
 
-button {
+.button {
     width: 100%;
     padding: 10px;
     margin: 6px 0;
@@ -48,10 +45,9 @@ button {
     cursor: pointer;
     background-color: #2d89ef;
     color: white;
-    transition: 0.3s;
 }
 
-button:hover {
+.button:hover {
     background-color: #1b5fa7;
 }
 
@@ -59,8 +55,10 @@ button:hover {
     margin-top: 15px;
     font-size: 13px;
     text-align: left;
-    max-height: 120px;
+    max-height: 140px;
     overflow-y: auto;
+    border-top: 1px solid #ccc;
+    padding-top: 8px;
 }
 </style>
 </head>
@@ -68,56 +66,74 @@ button:hover {
 <body>
 
 <div class="container">
-    <h1>🧼 Temizlik ve Gaz Takip</h1>
 
-    <!-- SENSÖR BÖLÜMÜ -->
+    <h1>🧼 Gaz & Temizlik Takip</h1>
+
+    <!-- CANLI SENSÖR DEĞERİ -->
     <div class="sensor">
-        Gaz Değeri: <span id="gaz">--</span>
+        Gaz Değeri: <span id="gaz">Bağlı Değil</span>
     </div>
 
-    <!-- TEMİZLİK ZAMANI -->
-    <p><strong>Temizlik Zamanı:</strong></p>
-    <p id="zaman"></p>
+    <!-- ARDUINO BAĞLANTI BUTONU -->
+    <button class="button" onclick="baglan()">Arduino Bağlan</button>
 
-    <!-- ÜRÜN BUTONLARI -->
+    <!-- SON TEMİZLİK ZAMANI -->
+    <p><strong>Son Temizlik Zamanı:</strong></p>
+    <p id="temizlikZamani">Henüz temizlik yapılmadı</p>
+
+    <!-- TEMİZLİK ÜRÜNLERİ -->
     <p><strong>Ürün Seç:</strong></p>
+    <button class="button" onclick="kaydet('Domestos')">Domestos</button>
+    <button class="button" onclick="kaydet('Cif')">Cif</button>
+    <button class="button" onclick="kaydet('Mr. Muscle')">Mr. Muscle</button>
+    <button class="button" onclick="kaydet('Bingo')">Bingo</button>
 
-    <button onclick="kaydet('Domestos')">Domestos</button>
-    <button onclick="kaydet('Cif')">Cif</button>
-    <button onclick="kaydet('Mr. Muscle')">Mr. Muscle</button>
-    <button onclick="kaydet('Bingo')">Bingo</button>
-
-    <!-- KAYIT LİSTESİ -->
+    <!-- TEMİZLİK KAYIT LİSTESİ -->
     <div class="kayit">
         <strong>Kayıtlar:</strong>
         <div id="liste"></div>
     </div>
+
 </div>
 
 <script>
-/* Saat */
-function guncelZaman() {
-    const now = new Date();
-    document.getElementById("zaman").innerText =
-        now.toLocaleString("tr-TR");
-}
-setInterval(guncelZaman, 1000);
-guncelZaman();
+let port;
+let reader;
 
-/* Temizlik Kaydı */
+/* ARDUINO BAĞLANTI FONKSİYONU */
+async function baglan() {
+    try {
+        port = await navigator.serial.requestPort();
+        await port.open({ baudRate: 9600 });
+
+        const decoder = new TextDecoderStream();
+        port.readable.pipeTo(decoder.writable);
+        reader = decoder.readable.getReader();
+
+        document.getElementById("gaz").innerText = "Bağlandı, veri bekleniyor...";
+
+        while (true) {
+            const { value, done } = await reader.read();
+            if (done) break;
+            if (value) {
+                document.getElementById("gaz").innerText = value.trim();
+            }
+        }
+
+    } catch (e) {
+        alert("Arduino bağlantısı iptal edildi veya hata oluştu.");
+    }
+}
+
+/* TEMİZLİK KAYDI FONKSİYONU */
 function kaydet(marka) {
     const now = new Date().toLocaleString("tr-TR");
-    const yeniKayit = document.createElement("div");
-    yeniKayit.innerText = now + " - " + marka + " ile temizlendi";
-    document.getElementById("liste").prepend(yeniKayit);
-}
+    document.getElementById("temizlikZamani").innerText = now;
 
-/* SENSÖR SİMÜLASYON (şimdilik) */
-/* Gerçek Arduino bağlantısı yoksa test için */
-setInterval(function(){
-    let rastgele = Math.floor(Math.random() * 400) + 100;
-    document.getElementById("gaz").innerText = rastgele;
-}, 2000);
+    const yeni = document.createElement("div");
+    yeni.innerText = now + " - " + marka + " ile temizlendi";
+    document.getElementById("liste").prepend(yeni);
+}
 </script>
 
 </body>
