@@ -3,11 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gaz & Temizlik Takip</title>
+<title>Temizlik Kayıt Sistemi</title>
 
 <style>
 body {
     margin: 0;
+    padding: 0;
     font-family: Arial, sans-serif;
     background: url("bg.jpg") no-repeat center center;
     background-size: 1024px 1024px;
@@ -22,20 +23,17 @@ body {
     background: rgba(255,255,255,0.95);
     padding: 25px;
     border-radius: 15px;
-    width: 380px;
+    width: 360px;
     text-align: center;
-    box-shadow: 0 0 20px rgba(0,0,0,0.25);
+    box-shadow: 0 0 20px rgba(0,0,0,0.3);
 }
 
-h1 { color: #2d89ef; margin-top: 0; }
-
-.sensor {
-    font-size: 22px;
-    font-weight: bold;
-    margin: 15px 0;
+h1 {
+    margin-top: 0;
+    color: #2d89ef;
 }
 
-.button {
+button {
     width: 100%;
     padding: 10px;
     margin: 6px 0;
@@ -45,20 +43,19 @@ h1 { color: #2d89ef; margin-top: 0; }
     cursor: pointer;
     background-color: #2d89ef;
     color: white;
+    transition: 0.3s;
 }
 
-.button:hover {
+button:hover {
     background-color: #1b5fa7;
 }
 
 .kayit {
     margin-top: 15px;
-    font-size: 13px;
+    font-size: 14px;
     text-align: left;
-    max-height: 140px;
+    max-height: 120px;
     overflow-y: auto;
-    border-top: 1px solid #ccc;
-    padding-top: 8px;
 }
 </style>
 </head>
@@ -66,74 +63,40 @@ h1 { color: #2d89ef; margin-top: 0; }
 <body>
 
 <div class="container">
+    <h1>🧼 Temizlik Kayıt Sistemi</h1>
 
-    <h1>🧼 Gaz & Temizlik Takip</h1>
+    <p><strong>Temizlik Zamanı:</strong></p>
+    <p id="zaman"></p>
 
-    <!-- CANLI SENSÖR DEĞERİ -->
-    <div class="sensor">
-        Gaz Değeri: <span id="gaz">Bağlı Değil</span>
-    </div>
-
-    <!-- ARDUINO BAĞLANTI BUTONU -->
-    <button class="button" onclick="baglan()">Arduino Bağlan</button>
-
-    <!-- SON TEMİZLİK ZAMANI -->
-    <p><strong>Son Temizlik Zamanı:</strong></p>
-    <p id="temizlikZamani">Henüz temizlik yapılmadı</p>
-
-    <!-- TEMİZLİK ÜRÜNLERİ -->
     <p><strong>Ürün Seç:</strong></p>
-    <button class="button" onclick="kaydet('Domestos')">Domestos</button>
-    <button class="button" onclick="kaydet('Cif')">Cif</button>
-    <button class="button" onclick="kaydet('Mr. Muscle')">Mr. Muscle</button>
-    <button class="button" onclick="kaydet('Bingo')">Bingo</button>
 
-    <!-- TEMİZLİK KAYIT LİSTESİ -->
+    <button onclick="kaydet('Domestos')">Domestos</button>
+    <button onclick="kaydet('Cif')">Cif</button>
+    <button onclick="kaydet('Mr. Muscle')">Mr. Muscle</button>
+    <button onclick="kaydet('Bingo')">Bingo</button>
+
     <div class="kayit">
         <strong>Kayıtlar:</strong>
         <div id="liste"></div>
     </div>
-
 </div>
 
 <script>
-let port;
-let reader;
-
-/* ARDUINO BAĞLANTI FONKSİYONU */
-async function baglan() {
-    try {
-        port = await navigator.serial.requestPort();
-        await port.open({ baudRate: 9600 });
-
-        const decoder = new TextDecoderStream();
-        port.readable.pipeTo(decoder.writable);
-        reader = decoder.readable.getReader();
-
-        document.getElementById("gaz").innerText = "Bağlandı, veri bekleniyor...";
-
-        while (true) {
-            const { value, done } = await reader.read();
-            if (done) break;
-            if (value) {
-                document.getElementById("gaz").innerText = value.trim();
-            }
-        }
-
-    } catch (e) {
-        alert("Arduino bağlantısı iptal edildi veya hata oluştu.");
-    }
+function guncelZaman() {
+    const now = new Date();
+    document.getElementById("zaman").innerText =
+        now.toLocaleString("tr-TR");
 }
 
-/* TEMİZLİK KAYDI FONKSİYONU */
 function kaydet(marka) {
     const now = new Date().toLocaleString("tr-TR");
-    document.getElementById("temizlikZamani").innerText = now;
-
-    const yeni = document.createElement("div");
-    yeni.innerText = now + " - " + marka + " ile temizlendi";
-    document.getElementById("liste").prepend(yeni);
+    const yeniKayit = document.createElement("div");
+    yeniKayit.innerText = now + " - " + marka + " ile temizlendi";
+    document.getElementById("liste").prepend(yeniKayit);
 }
+
+setInterval(guncelZaman, 1000);
+guncelZaman();
 </script>
 
 </body>
