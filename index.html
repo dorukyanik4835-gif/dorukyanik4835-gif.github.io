@@ -3,36 +3,53 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Temizlik & Gaz Takip</title>
+<title>Hava Kalite & Temizlik Takip</title>
 
 <style>
+* {
+    box-sizing: border-box;
+}
+
 body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background: url("bg.jpg") no-repeat center center;
-    background-size: 1024px 1024px;
-    background-color: #f2f2f2;
+    background: linear-gradient(135deg, #2d89ef, #1b5fa7);
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
 }
 
-.container {
-    background: rgba(255,255,255,0.95);
+.card {
+    background: white;
+    width: 350px;
     padding: 25px;
-    border-radius: 15px;
-    width: 360px;
+    border-radius: 20px;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.2);
     text-align: center;
-    box-shadow: 0 0 20px rgba(0,0,0,0.25);
 }
 
-h1 { margin-top: 0; color: #2d89ef; }
+h1 {
+    margin-top: 0;
+    font-size: 20px;
+    color: #2d89ef;
+}
 
-.gaz {
-    font-size: 22px;
+.gazDeger {
+    font-size: 28px;
     font-weight: bold;
     margin: 10px 0;
+}
+
+.durum {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.uyari {
+    color: red;
+    font-weight: bold;
+    margin-bottom: 10px;
 }
 
 button {
@@ -40,22 +57,108 @@ button {
     padding: 10px;
     margin: 6px 0;
     border: none;
-    border-radius: 8px;
-    font-size: 15px;
+    border-radius: 10px;
+    font-size: 14px;
     cursor: pointer;
-    background-color: #2d89ef;
+    background: #2d89ef;
     color: white;
+    transition: 0.3s;
 }
 
-button:hover { background-color: #1b5fa7; }
+button:hover {
+    background: #1b5fa7;
+}
 
-.kayit {
+.temizlikBox {
     margin-top: 15px;
     font-size: 13px;
-    text-align: left;
-    max-height: 140px;
-    overflow-y: auto;
-    border-top: 1px solid #ccc;
-    padding-top: 8px;
+    border-top: 1px solid #ddd;
+    padding-top: 10px;
 }
-</style
+
+.kayitlar {
+    max-height: 120px;
+    overflow-y: auto;
+    text-align: left;
+    margin-top: 8px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+    <h1>🌬️ Hava Kalite Takibi</h1>
+
+    <div class="gazDeger">
+        <span id="gaz">--</span> PPM
+    </div>
+
+    <div class="durum" id="durum">Durum Bekleniyor...</div>
+    <div class="uyari" id="uyari"></div>
+
+    <h3>🧼 Temizlik Kaydı</h3>
+
+    <p><strong>Son Temizlik:</strong></p>
+    <p id="sonTemizlik">Henüz yapılmadı</p>
+
+    <button onclick="temizlikKaydet('Domestos')">Domestos</button>
+    <button onclick="temizlikKaydet('Cif')">Cif</button>
+    <button onclick="temizlikKaydet('Mr. Muscle')">Mr. Muscle</button>
+    <button onclick="temizlikKaydet('Bingo')">Bingo</button>
+
+    <div class="temizlikBox">
+        <strong>Geçmiş Kayıtlar:</strong>
+        <div class="kayitlar" id="liste"></div>
+    </div>
+
+</div>
+
+<script>
+
+function gazUret() {
+    let deger = Math.floor(Math.random() * 500) + 100;
+    document.getElementById("gaz").innerText = deger;
+
+    let durum = document.getElementById("durum");
+    let uyari = document.getElementById("uyari");
+
+    if (deger <= 250) {
+        durum.innerText = "🟢 Hava Temiz";
+        durum.style.color = "green";
+        uyari.innerText = "";
+    }
+    else if (deger <= 400) {
+        durum.innerText = "🟡 Orta Seviye";
+        durum.style.color = "orange";
+        uyari.innerText = "";
+    }
+    else {
+        durum.innerText = "🔴 Kirli Hava";
+        durum.style.color = "red";
+        uyari.innerText = "⚠ Temizlik Öneriliyor!";
+    }
+}
+
+setInterval(gazUret, 2000);
+gazUret();
+
+function temizlikKaydet(marka) {
+    const zaman = new Date().toLocaleString("tr-TR");
+
+    document.getElementById("sonTemizlik").innerText = zaman;
+
+    const yeni = document.createElement("div");
+    yeni.innerText = zaman + " - " + marka + " ile temizlendi";
+
+    document.getElementById("liste").prepend(yeni);
+
+    document.getElementById("uyari").innerText = "";
+}
+
+</script>
+
+</body>
+</html>
+
